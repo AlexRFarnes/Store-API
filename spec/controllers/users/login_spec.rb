@@ -18,8 +18,13 @@ RSpec.describe V1::UsersController, type: :controller do
             end
             context 'Response from correct login' do
                 subject { payload_test }
-                it { is_expected.to include(:id, :email, :age, :store) }
+                it { is_expected.to include(:id, :email, :age, :store, :token) }
             end
+            context "Token response structure is correct" do
+                subject { payload_test[:token] }
+                it { is_expected.to include(:id, :token, :expires_at)}
+            end
+            
         end
         context 'Failed login session' do
             before do

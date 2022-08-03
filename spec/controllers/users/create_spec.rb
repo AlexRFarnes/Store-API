@@ -2,17 +2,12 @@ require 'rails_helper'
 
 RSpec.describe V1::UsersController, type: :controller do
     describe 'Users registration' do
-        let(:user) { 
-                        { 
-                            email: Faker::Internet.email, 
-                            age: rand(30...100), 
-                            password: Faker::Internet.password(min_length: 10, max_length: 20),
-                            store_attributes: 
-                                {
-                                    name: Faker::Games::Zelda.game
-                                }    
-                        } 
-                   }
+        let(:user) { { 
+                        email: Faker::Internet.email, 
+                        age: rand(30...100), 
+                        password: Faker::Internet.password(min_length: 10, max_length: 20),
+                        store_attributes: { name: Faker::Games::Zelda.game }    
+                    } }
         context 'Correct user registration' do
             before do
                 post(:create, format: :json, params: { user: user })
@@ -23,12 +18,17 @@ RSpec.describe V1::UsersController, type: :controller do
             end
             context 'Response contains the correct values for user' do  
                 subject { payload_test }
-                it { is_expected.to include(:id, :email, :age, :store) }
+                it { is_expected.to include(:id, :email, :age, :store, :token) }
             end
             context 'Response contains the correct values for store ' do
                 subject { payload_test[:store] }
                 it { is_expected.to include(:id, :name, :created_at, :updated_at)}
             end
+            context "Response contains correct values for token" do
+                subject { payload_test[:token] }
+                it { is_expected.to include(:id, :token, :expires_at) }        
+            end
+            
         end
         let(:bad_user) { { email: "test", age: 10, password: "123456" } }
         context 'Wrong user' do
