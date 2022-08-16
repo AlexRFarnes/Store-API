@@ -12,5 +12,4 @@ class Token < ApplicationRecord
     end
     self.expires_at ||= 2.hours.from_now
   end
-  
 end

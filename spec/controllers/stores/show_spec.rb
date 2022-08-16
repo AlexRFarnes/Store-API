@@ -37,7 +37,5 @@ RSpec.describe V1::StoresController, type: :controller do
             subject { response }
             it { is_expected.to have_http_status(:unauthorized)}
         end
-        
     end
-    
 end
