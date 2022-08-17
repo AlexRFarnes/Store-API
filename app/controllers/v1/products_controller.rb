@@ -2,8 +2,13 @@ module V1
     class ProductsController < ApplicationController
         before_action :authenticate_user!
         before_action :set_store
-        before_action :set_product, only: %i[update]
+        before_action :set_product, only: %i[update destroy]
 
+        def index
+            @products = @store.products
+            render json: { products: @products }, status: :ok
+        end
+        
         def create
             @product = @store.products.new(product_params)
             if @product.valid?
@@ -20,6 +25,18 @@ module V1
             else
                 render json: { errors: @product.errors.messages }, status: :bad_request
             end
+        end
+
+        def destroy
+            @product.destroy
+            head :ok
+        end
+
+        def restore
+            @product = @store.products.only_deleted.find_by(id: params[:product_id])
+            head :not_found unless @product
+            Product.restore @product.id
+            render :show, status: :ok
         end
         
 
